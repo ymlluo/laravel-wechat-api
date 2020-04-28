@@ -1,16 +1,16 @@
 {
-    "name": "ymlluo/wxapi",
-    "description": ":package_description",
+    "name": "ymlluo/laravel-wxapi",
+    "description": "wechat sdk  for laravel",
     "license": "license",
     "authors": [
         {
-            "name": "author name",
-            "email": "author email",
-            "homepage": "author homepage"
+            "name": "ymlluo",
+            "email": "ymlluo@gmail.com",
+            "homepage": "https://github.com/ymlluo"
         }
     ],
     "homepage": "https://github.com/ymlluo/wxapi",
-    "keywords": ["Laravel", "Wechat"],
+    "keywords": ["Laravel", "Wechat","weixin","微信"],
     "require": {
         "illuminate/support": "~5|~6|~7"
     },
