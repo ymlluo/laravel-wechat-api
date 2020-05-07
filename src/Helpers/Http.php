@@ -427,6 +427,7 @@ class Http
      */
     public function send(string $method, string $url, array $options = [])
     {
+        $this->response =null;
         $url = ltrim(rtrim($this->baseUrl, '/') . '/' . ltrim($url, '/'), '/');
 
         if (isset($options[$this->bodyFormat])) {
@@ -490,9 +491,7 @@ class Http
      */
     public function json()
     {
-        if (!$this->decoded) {
-            $this->decoded = json_decode($this->body(), true);
-        }
+        $this->decoded = json_decode($this->body(), true);
         Log::debug('http res array', (array)$this->decoded);
         return $this->decoded;
     }

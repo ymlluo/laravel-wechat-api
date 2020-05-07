@@ -58,30 +58,38 @@ class Resource
      * @return array|mixed
      * @throws WxException
      */
-    public function mediaUpload($filepath, $type = '', $filename = null,$fileFieldName = 'media', $useCache = true)
+    public function mediaUpload($filepath, $type = '', $filename = null, $fileFieldName = 'media', $useCache = true)
     {
+
         $guessPath = $this->_guessFilepath($filepath);
+
         if ($useCache && $cache = cache($this->_getMediaCacheKey($guessPath))) {
             return $cache;
         }
-        if (!file_exists($guessPath) && filter_var($filepath, FILTER_VALIDATE_URL)) {
-            $filepath =  $this->_download($filepath);
+        if (filter_var($filepath, FILTER_VALIDATE_URL)) {
+            if (!file_exists($guessPath)) {
+                $this->_download($filepath);
+            }
+            $filepath = $guessPath;
         }
         if (!file_exists($guessPath)) {
             throw new WxException('file not exists!', ErrorCode::$resourceUploadFileNotExists);
         }
+
         $type = $type ?: $this->guessFileType($filepath);
         if (!$this->checkFileSize($type, $filepath)) {
             throw new WxException('upload temp media file size error', ErrorCode::$resourceFileSizeError);
         }
+
         $url = $this->app->getConfig('api_origin') . self::PATH_TEMP_MEDIA_UPLOAD . '?access_token=' . $this->access_token . '&type=' . $type;
+
         $response = $this->httpClient->attach($fileFieldName, fopen($filepath, 'r'), $filename)->post($url);
         $data = $response->throw()->json();
         $ttl = 3 * 24 * 60 * 60 - 300;
-        cache()->put($this->_getMediaCacheKey($filepath), $data,$ttl);
+        cache()->put($this->_getMediaCacheKey($filepath), $data, $ttl);
         $mediaId = data_get($data, 'media_id');
-        if (function_exists('event')){
-            event(new WxMediaUpload($mediaId,$filepath,$filename,$ttl));
+        if (function_exists('event')) {
+            event(new WxMediaUpload($mediaId, $filepath, $filename, $ttl));
         }
         return $data;
 
@@ -113,7 +121,7 @@ class Resource
 
         if (file_exists($filePath)) {
             if (function_exists('event')) {
-                event(new WxMediaDownload($mediaId,$filePath, $filename));
+                event(new WxMediaDownload($mediaId, $filePath, $filename));
             }
             return $filePath;
         }
@@ -182,28 +190,29 @@ class Resource
         $url = $this->app->getConfig('api_origin') . self::PATH_MATERIAL_ADD . '?access_token=' . $this->access_token . '&type=' . $type;
         $request = $this->httpClient->attach('media', fopen($filepath, 'r'), $filename);
         if ($type == 'video') {
-            $request->attach('description', json_encode(['title' => $title, 'introduction' => $introduction],256));
+            $request->attach('description', json_encode(['title' => $title, 'introduction' => $introduction], 256));
         }
         $res = $request->post($url);
         $data = $res->throw()->json();
         cache()->put($this->_getMaterialCacheKey($filepath), $data);
-        $mediaId = data_get($data, 'media_id','');
-        $url = data_get($data, 'url','');
-        if (function_exists('event')){
-            event(new WxMediaUpload($mediaId,$filepath,$filename,0,$url));
+        $mediaId = data_get($data, 'media_id', '');
+        $url = data_get($data, 'url', '');
+        if (function_exists('event')) {
+            event(new WxMediaUpload($mediaId, $filepath, $filename, 0, $url));
         }
         return $data;
     }
 
-    public function materialGet($mediaId, $savePath = null){
+    public function materialGet($mediaId, $savePath = null)
+    {
         $savePath = $savePath ?: $this->_tempPath();
         $url = $this->app->getConfig('api_origin') . self::PATH_MATERIAL_GET . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($url,['media_id'=>$mediaId]);
-        $data =$response->throw()->json();
+        $response = $this->httpClient->post($url, ['media_id' => $mediaId]);
+        $data = $response->throw()->json();
         if (data_get($data, 'news_item')) {
-            return  $data;
+            return $data;
         }
-        $filename = uniqid().'.tmp';
+        $filename = uniqid() . '.tmp';
         $filePath = $savePath . '/' . $filename;
         if (preg_match('/filename="(.*?)"/is', (string)$response->header('Content-disposition'), $match)) {
             $filename = $match[1];
@@ -212,54 +221,57 @@ class Resource
                 mkdir($savePath, 644, true);
             }
             file_put_contents($filePath, $response->body());
-            $data = array_merge(['mediaId'=>$mediaId,'filepath'=>$filePath,'filename'=>$filename]);
+            $data = array_merge(['mediaId' => $mediaId, 'filepath' => $filePath, 'filename' => $filename]);
         }
         if ($video_url = data_get($response->json(), 'down_url')) {
             $filename = $mediaId . '.mp4';
             $filePath = $savePath . '/' . $filename;
             $response = $this->httpClient->asChrome()->download($video_url, $filePath);
-            $data =$response->throw()->json();
-            $data = array_merge($data,['mediaId'=>$mediaId,'filepath'=>$filePath,'filename'=>$filename]);
+            $data = $response->throw()->json();
+            $data = array_merge($data, ['mediaId' => $mediaId, 'filepath' => $filePath, 'filename' => $filename]);
         }
         if (file_exists($filePath)) {
             if (function_exists('event')) {
-                event(new WxMediaDownload($mediaId,$filePath, $filename,$data));
+                event(new WxMediaDownload($mediaId, $filePath, $filename, $data));
             }
-            return  $data;
+            return $data;
         }
         throw new WxException('download temp media file error');
     }
 
-    public function materialDel(string $mediaId){
+    public function materialDel(string $mediaId)
+    {
         $url = $this->app->getConfig('api_origin') . self::PATH_MATERIAL_DEL . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($url,['media_id'=>$mediaId]);
-        $data =$response->throw()->json();
+        $response = $this->httpClient->post($url, ['media_id' => $mediaId]);
+        $data = $response->throw()->json();
         return $data;
     }
 
-    public function materialCount(){
+    public function materialCount()
+    {
         $url = $this->app->getConfig('api_origin') . self::PATH_MATERIAL_COUNT . '?access_token=' . $this->access_token;
         $response = $this->httpClient->get($url);
-        $data =$response->throw()->json();
+        $data = $response->throw()->json();
         return $data;
     }
 
     /**
      * 分类型获取永久素材的列表
      * @param $type  素材的类型，图片（image）、视频（video）、语音 （voice）、图文（news）
-     * @param int $offset 	从全部素材的该偏移位置开始返回，0表示从第一个素材 返回
+     * @param int $offset 从全部素材的该偏移位置开始返回，0表示从第一个素材 返回
      * @param int $count 返回素材的数量，取值在1到20之间
      * @return mixed
      * @throws \Exception
      */
-    public function materialList($type,$offset =0,$count =20){
+    public function materialList($type, $offset = 0, $count = 20)
+    {
         $url = $this->app->getConfig('api_origin') . self::PATH_MATERIAL_LIST . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($url,[
-            'type'=>$type,
-            'offset'=>$offset,
-            'count'=>$count
+        $response = $this->httpClient->post($url, [
+            'type' => $type,
+            'offset' => $offset,
+            'count' => $count
         ]);
-        $data =$response->throw()->json();
+        $data = $response->throw()->json();
         return $data;
     }
 
@@ -336,14 +348,15 @@ class Resource
                 $filename = $match[1];
             }
             $filename = $filename ?: (md5($filepath) . '.tmp');
-            $savePath =$this->_tempPath();
+            $savePath = $this->_tempPath();
             $filepath = $savePath . '/' . $filename;
         }
         return $filepath;
     }
 
-    private function _tempPath(){
-        return   storage_path('wx_media_temp/' . date('Ymd'));
+    private function _tempPath()
+    {
+        return storage_path('wx_media_temp/' . date('Ymd'));
     }
 
     private function _download($downloadUrl, $filename = null, $savePath = null)
