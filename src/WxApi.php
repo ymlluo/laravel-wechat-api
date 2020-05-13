@@ -2,7 +2,9 @@
 
 namespace ymlluo\WxApi;
 
+use Illuminate\Support\Arr;
 use ymlluo\WxApi\Events\MessageReceived;
+use ymlluo\WxApi\Helpers\Logger;
 use ymlluo\WxApi\Modules\CustomerService;
 use ymlluo\WxApi\Modules\Menu;
 use ymlluo\WxApi\Modules\Message;
@@ -47,6 +49,7 @@ class WxApi
     {
         if (request()->isMethod('GET')) {
             response($this->checkSignature())->send();
+            die();
         }
     }
 

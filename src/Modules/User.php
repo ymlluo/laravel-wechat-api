@@ -6,7 +6,6 @@ namespace ymlluo\WxApi\Modules;
 
 use ymlluo\WxApi\Helpers\Http;
 use ymlluo\WxApi\WxApi;
-use ymlluo\WxApi\WxManager;
 
 class User
 {
@@ -270,7 +269,6 @@ class User
         $data = $response->throw()->json();
         return $data;
     }
-
 
 
 }

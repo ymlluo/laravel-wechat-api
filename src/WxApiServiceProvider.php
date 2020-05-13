@@ -46,7 +46,7 @@ class WxApiServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['wxapi.manager','wxapi'];
+        return ['wxapi'];
     }
 
     /**
