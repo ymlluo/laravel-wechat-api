@@ -5,10 +5,9 @@ namespace ymlluo\WxApi\Modules;
 
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use  ymlluo\WxApi\Events\MessageReply;
-use  ymlluo\WxApi\Support\Encrypt;
-use  ymlluo\WxApi\Support\XML;
+use ymlluo\WxApi\Events\MessageReply;
+use ymlluo\WxApi\Support\Encrypt;
+use ymlluo\WxApi\Support\XML;
 
 class Message
 {
@@ -228,14 +227,17 @@ class Message
      * 卡券ID。
      * @return array|mixed
      */
-    public function cardId(){
+    public function cardId()
+    {
         return data_get($this->message, 'CardId');
     }
+
     /**
      * 卡券Code码
      * @return array|mixed
      */
-    public function userCardCode(){
+    public function userCardCode()
+    {
         return data_get($this->message, 'UserCardCode');
     }
 
@@ -243,10 +245,13 @@ class Message
      * 实付金额，单位为分
      * @return array|mixed
      */
-    public function transId(){
+    public function transId()
+    {
         return data_get($this->message, 'TransId');
     }
-    public function fee(){
+
+    public function fee()
+    {
         return data_get($this->message, 'Fee');
     }
 
@@ -254,7 +259,8 @@ class Message
      * 应付金额，单位为分
      * @return array|mixed
      */
-    public function originalFee(){
+    public function originalFee()
+    {
         return data_get($this->message, 'OriginalFee');
     }
 
@@ -262,7 +268,8 @@ class Message
      * 门店名称，当前卡券核销的门店名称（只有通过卡券商户助手和买单核销时才会出现）
      * @return array|mixed
      */
-    public function locationName(){
+    public function locationName()
+    {
         return data_get($this->message, 'LocationName');
     }
 
@@ -270,7 +277,8 @@ class Message
      * 门店ID
      * @return array|mixed
      */
-    public function locationId(){
+    public function locationId()
+    {
         return data_get($this->message, 'LocationId');
     }
 
@@ -505,7 +513,7 @@ class Message
     public function text($text = '')
     {
         Arr::set($this->replyData, 'MsgType', 'text');
-        Arr::set($this->replyData, 'Content', 'text');
+        Arr::set($this->replyData, 'Content', $text);
         return $this->send();
     }
 
@@ -613,7 +621,8 @@ class Message
             event(new MessageReply($this->replyData));
         }
 
-        return response($xml)->send();
+        response($xml)->send();
+        die();
     }
 
 }

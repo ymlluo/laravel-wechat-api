@@ -2,9 +2,8 @@
 
 namespace ymlluo\WxApi;
 
-use Illuminate\Support\Arr;
 use ymlluo\WxApi\Events\MessageReceived;
-use ymlluo\WxApi\Helpers\Logger;
+use ymlluo\WxApi\Exceptions\WxException;
 use ymlluo\WxApi\Modules\CustomerService;
 use ymlluo\WxApi\Modules\Menu;
 use ymlluo\WxApi\Modules\Message;
@@ -16,16 +15,16 @@ use ymlluo\WxApi\Support\XML;
 
 class WxApi
 {
-    protected $modules = [];
+    protected $modules;
     public $configs;
     public $encrypt;
     public $postXml;
     public $receive;
     public $message;
 
-    public function __construct()
+    public function __construct($account = 'default')
     {
-        $this->account();
+        $this->account($account);
         $this->receiveMessage();
     }
 
@@ -37,6 +36,9 @@ class WxApi
 
     public function getConfigs($account)
     {
+        if (!app('config')['wxapi.accounts.' . $account]) {
+            throw new WxException('account not exists', -1);
+        }
         return array_merge(app('config')['wxapi.accounts.' . $account], app('config')['wxapi.common']);
     }
 
@@ -51,6 +53,7 @@ class WxApi
             response($this->checkSignature())->send();
             die();
         }
+
     }
 
     public function receiveMessage()
@@ -72,6 +75,8 @@ class WxApi
 
     public function message()
     {
+//        return new Message($this->receive, $this->encrypt);
+
         if (!isset($this->modules['message'])) {
             $this->modules['message'] = new Message($this->receive, $this->encrypt);
         }
