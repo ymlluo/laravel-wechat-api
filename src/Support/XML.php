@@ -17,7 +17,7 @@ class XML
     {
         $xmlStr = preg_replace('/[^\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]+/u', '', $xmlStr);
         $xml_entity_loader = libxml_disable_entity_loader(true);
-        $array = (array)simplexml_load_string($xmlStr, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA | LIBXML_NOBLANKS);
+        $array = json_decode(json_encode(simplexml_load_string($xmlStr, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA | LIBXML_NOBLANKS),JSON_UNESCAPED_UNICODE),true);
         libxml_disable_entity_loader($xml_entity_loader);
         return $array;
     }

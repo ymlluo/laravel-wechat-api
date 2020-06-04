@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class WxMediaUpload implements ShouldBroadcast
+class WxMediaUpload
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,13 +33,4 @@ class WxMediaUpload implements ShouldBroadcast
         $this->url =$url;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('wx:resource:uploaded');
-    }
 }

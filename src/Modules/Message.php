@@ -510,10 +510,14 @@ class Message
     }
 
 
-    public function text($text = '')
+    public function text($text = '', $append = false)
     {
         Arr::set($this->replyData, 'MsgType', 'text');
-        Arr::set($this->replyData, 'Content', $text);
+        if (!$append){
+            $this->replyData['Content'] = '';
+        }
+        Arr::set($this->replyData, 'Content', $this->replyData['Content'].$text);
+
         return $this->send();
     }
 
@@ -623,6 +627,11 @@ class Message
 
         response($xml)->send();
         die();
+    }
+
+    public function __toString()
+    {
+        return json_encode($this->message,JSON_UNESCAPED_UNICODE);
     }
 
 }

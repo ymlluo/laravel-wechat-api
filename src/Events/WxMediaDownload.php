@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class WxMediaDownload implements ShouldBroadcast
+class WxMediaDownload
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -30,15 +30,5 @@ class WxMediaDownload implements ShouldBroadcast
         $this->filepath = $filepath;
         $this->filename = $filename;
         $this->extra = $extra;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('wx:media:downloaded');
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageReceived implements ShouldBroadcast
+class MessageReceived
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,13 +24,4 @@ class MessageReceived implements ShouldBroadcast
         $this->message = $message;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('wx:message:received');
-    }
 }
