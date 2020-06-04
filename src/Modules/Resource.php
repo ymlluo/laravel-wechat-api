@@ -4,16 +4,12 @@
 namespace ymlluo\WxApi\Modules;
 
 
-use Illuminate\Filesystem\Cache;
-use Illuminate\Support\Str;
-use  ymlluo\WxApi\AccessToken;
 use ymlluo\WxApi\Events\WxMediaDownload;
 use ymlluo\WxApi\Events\WxMediaUpload;
 use ymlluo\WxApi\Exceptions\ErrorCode;
 use ymlluo\WxApi\Exceptions\WxException;
 use ymlluo\WxApi\Helpers\Http;
 use ymlluo\WxApi\WxApi;
-use ymlluo\WxApi\WxManager;
 
 class Resource
 {

@@ -6,7 +6,6 @@ namespace ymlluo\WxApi\Modules;
 
 use ymlluo\WxApi\Helpers\Http;
 use ymlluo\WxApi\WxApi;
-use ymlluo\WxApi\WxManager;
 
 class User
 {
@@ -189,6 +188,7 @@ class User
         $url = $this->app->getConfig('api_origin') . self::PATH_USER_INFO . '?access_token=' . $this->access_token . '&openid=' . $openid . '&lang=zh_CN';
         $response = $this->httpClient->get($url);
         $data = $response->throw()->json();
+        \Log::debug('info',$data);
         return $data;
     }
 
@@ -235,7 +235,7 @@ class User
      */
     public function blackList(string $beginOpenid = '')
     {
-        $url = $this->app->getConfig('api_origin') . self::PATH_USER_BLACK_LIST . '?access_token=' . $this->access_token . '&next_openid=' . $nextOpenid;
+        $url = $this->app->getConfig('api_origin') . self::PATH_USER_BLACK_LIST . '?access_token=' . $this->access_token . '&next_openid=' . $beginOpenid;
         $response = $this->httpClient->post($url, ['begin_openid' => $beginOpenid]);
         $data = $response->throw()->json();
         return $data;
@@ -270,7 +270,6 @@ class User
         $data = $response->throw()->json();
         return $data;
     }
-
 
 
 }

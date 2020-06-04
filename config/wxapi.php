@@ -9,14 +9,14 @@ return [
     //公众号配置
     'accounts' => [
         'default' => [
-            'original_id'=>'gh_2d686c71d734',
-            'app_id' => env('WECHAT_DEFAULT_APP_ID', ''), // AppID
-            'app_secret' => env('WECHAT_DEFAULT_APP_SECRET', ''), // AppSecret
-            'token' => env('WECHAT_DEFAULT_TOKEN', ''), // Token
-            'aes_key' => env('WECHAT_DEFAULT_AES_KEY', ''),
-            'access_token_url' => env('WECHAT_ACCESS_TOKEN_URL', ''), // get access_token url
-            'access_token_expires_in' => env('WECHAT_ACCESS_TOKEN_EXPIRES_IN', 7200)
+            'original_id' => env('WX_ORIGINAL_ID', ''),
+            'app_id' => env('WX_APP_ID', ''), // AppID
+            'app_secret' => env('WX_APP_SECRET', ''), // AppSecret
+            'token' => env('WX_TOKEN', ''), // Token
+            'aes_key' => env('WX_AES_KEY', ''),
+            'access_token_url' => env('WX_ACCESS_TOKEN_URL', ''), // get access_token url
+            'access_token_expires_in' => env('WX_ACCESS_TOKEN_EXPIRES_IN', 7200),
+            'log_enable' => env('WX_LOG_ENABLE', 7200),
         ],
-
     ]
 ];

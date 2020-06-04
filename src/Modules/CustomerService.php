@@ -6,11 +6,9 @@ namespace ymlluo\WxApi\Modules;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use  ymlluo\WxApi\AccessToken;
-use  ymlluo\WxApi\Exceptions\WxException;
-use  ymlluo\WxApi\Helpers\Http;
+use ymlluo\WxApi\Exceptions\WxException;
+use ymlluo\WxApi\Helpers\Http;
 use ymlluo\WxApi\WxApi;
-use ymlluo\WxApi\WxManager;
 
 class CustomerService
 {
@@ -107,7 +105,7 @@ class CustomerService
     {
         Arr::set($this->message, 'msgtype', 'video');
         Arr::set($this->message, 'video.media_id', $this->app->resource()->mediaId($media_id));
-        Arr::set($this->message, 'video.thumb_media_id', $this->app->resource()->mediaId($thumb_media_id,'thumb'));
+        Arr::set($this->message, 'video.thumb_media_id', $this->app->resource()->mediaId($thumb_media_id, 'thumb'));
         Arr::set($this->message, 'video.title', $title);
         Arr::set($this->message, 'video.description', $description);
         return $this->sendMessage();

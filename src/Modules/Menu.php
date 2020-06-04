@@ -6,7 +6,6 @@ namespace ymlluo\WxApi\Modules;
 
 use ymlluo\WxApi\Helpers\Http;
 use ymlluo\WxApi\WxApi;
-use ymlluo\WxApi\WxManager;
 
 class Menu
 {
@@ -55,7 +54,8 @@ class Menu
         $data = $response->throw()->json();
         return $data;
     }
- /**
+
+    /**
      * 查询自定义菜单的配置
      * @return mixed
      * @throws \Exception

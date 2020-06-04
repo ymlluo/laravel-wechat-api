@@ -6,7 +6,6 @@ namespace ymlluo\WxApi\Modules;
 
 use ymlluo\WxApi\Helpers\Http;
 use ymlluo\WxApi\WxApi;
-use ymlluo\WxApi\WxManager;
 
 class TemplateMessage
 {
@@ -155,8 +154,9 @@ class TemplateMessage
      * @param string $reserved
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function subscribeOnceRedirect(int $scene,string $template_id,string $redirect_url,$reserved=''){
-        $targetUrl = 'https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm&appid='.$this->app->getConfig('app_id').'&scene='.$scene.'&template_id='.$template_id.'&redirect_url='.urlencode($redirect_url).'&reserved='.$reserved.'#wechat_redirect';
+    public function subscribeOnceRedirect(int $scene, string $template_id, string $redirect_url, $reserved = '')
+    {
+        $targetUrl = 'https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm&appid=' . $this->app->getConfig('app_id') . '&scene=' . $scene . '&template_id=' . $template_id . '&redirect_url=' . urlencode($redirect_url) . '&reserved=' . $reserved . '#wechat_redirect';
         return response()->redirectTo($targetUrl)->send();
     }
 

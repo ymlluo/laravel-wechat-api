@@ -25,11 +25,6 @@
             "ymlluo\\WxApi\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "ymlluo\\WxApi\\Tests\\": "tests"
-        }
-    },
     "extra": {
         "laravel": {
             "providers": [
