@@ -124,10 +124,10 @@ class User
      * @return mixed
      * @throws \Exception
      */
-    public function tagAddUsers(int $tagId, array $openidList)
+    public function tagAddUsers(int $tagId,  $openidList)
     {
         $url = $this->app->getConfig('api_origin') . self::PATH_TAGS_ADD_USERS . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($url, ['tagid' => $tagId, 'openid_list' => $openidList]);
+        $response = $this->httpClient->post($url, ['tagid' => $tagId, 'openid_list' => (array)$openidList]);
         $data = $response->throw()->json();
         return $data;
     }
@@ -251,7 +251,7 @@ class User
     public function blackAdd($openidList)
     {
         $url = $this->app->getConfig('api_origin') . self::PATH_USER_BLACK_ADD . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($url, ['openid_list' => $openidList]);
+        $response = $this->httpClient->post($url, ['openid_list' => (array)$openidList]);
         $data = $response->throw()->json();
         return $data;
     }
@@ -266,7 +266,7 @@ class User
     public function blackRemove($openidList)
     {
         $url = $this->app->getConfig('api_origin') . self::PATH_USER_BLACK_REMOVE . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($url, ['openid_list' => $openidList]);
+        $response = $this->httpClient->post($url, ['openid_list' => (array)$openidList]);
         $data = $response->throw()->json();
         return $data;
     }

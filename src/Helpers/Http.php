@@ -444,6 +444,7 @@ class Http
                     $this->response = $response;
                     $this->response->cookies = $this->cookies;
                     $this->response->transferStats = $this->transferStats;
+
                 });
             } catch (ConnectException $e) {
                 throw $e;
@@ -492,7 +493,7 @@ class Http
     public function json()
     {
         $this->decoded = json_decode($this->body(), true);
-        Log::debug('http res array', (array)$this->decoded);
+
         return $this->decoded;
     }
 
