@@ -56,7 +56,7 @@ class AccessToken
 
     protected function getCacheKey()
     {
-        $cacheKey = $this->getConfig('cache_prefix') . 'ACCESS_TOKEN:' . $this->getConfig('app_id');
+        $cacheKey = $this->getConfig('cache_prefix') . 'ACCESS_TOKEN:' . $this->app->getConfig('app_id');
         return $cacheKey;
     }
 

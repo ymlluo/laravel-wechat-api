@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use ymlluo\WxApi\Events\MessageReply;
 use ymlluo\WxApi\Support\Encrypt;
 use ymlluo\WxApi\Support\XML;
+use ymlluo\WxApi\WxApi;
 
 class Message
 {
@@ -41,11 +42,13 @@ class Message
     public $message;
     public $encrypt;
     public $replyData;
+    protected $wxApp;
 
-    public function __construct($message, $encrypt)
+    public function __construct(WxApi $wxApp)
     {
-        $this->message = $message;
-        $this->encrypt = $encrypt;
+        $this->wxApp = $wxApp;
+        $this->message = $wxApp->receive;
+        $this->encrypt = $wxApp->encrypt;
     }
 
     public function isText()
@@ -615,9 +618,9 @@ class Message
         $xml = XML::generateXml($this->replyData);
         if ($this->encrypt) {
             $xml = Encrypt::encodeXML(
-                app('wxapi')->getConfig('app_id'),
-                app('wxapi')->getConfig('aes_key'),
-                app('wxapi')->getConfig('token'),
+                $this->wxApp->getConfig('app_id'),
+                $this->wxApp->getConfig('aes_key'),
+                $this->wxApp->getConfig('token'),
                 $xml
             );
         }

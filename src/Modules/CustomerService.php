@@ -75,7 +75,7 @@ class CustomerService
     public function image(string $media)
     {
         Arr::set($this->message, 'msgtype', 'image');
-        Arr::set($this->message, 'image.media_id', $this->app->resource()->mediaId($media));
+        Arr::set($this->message, 'image.media_id', $this->app->resource()->mediaId($media,'image'));
         return $this->sendMessage();
     }
 
@@ -88,7 +88,7 @@ class CustomerService
     public function voice(string $media)
     {
         Arr::set($this->message, 'msgtype', 'voice');
-        Arr::set($this->message, 'voice.media_id', $this->app->resource()->mediaId($media));
+        Arr::set($this->message, 'voice.media_id', $this->app->resource()->mediaId($media,'voice'));
         return $this->sendMessage();
     }
 
@@ -104,8 +104,11 @@ class CustomerService
     public function video(string $title, string $description, string $media_id, string $thumb_media_id)
     {
         Arr::set($this->message, 'msgtype', 'video');
-        Arr::set($this->message, 'video.media_id', $this->app->resource()->mediaId($media_id));
-        Arr::set($this->message, 'video.thumb_media_id', $this->app->resource()->mediaId($thumb_media_id, 'thumb'));
+        Arr::set($this->message, 'video.media_id', $this->app->resource()->mediaId($media_id,'video'));
+        if ($thumb_media_id){
+            Arr::set($this->message, 'video.thumb_media_id', $this->app->resource()->mediaId($thumb_media_id, 'thumb'));
+        }
+
         Arr::set($this->message, 'video.title', $title);
         Arr::set($this->message, 'video.description', $description);
         return $this->sendMessage();
@@ -287,7 +290,7 @@ class CustomerService
         $response = $this->httpClient->post($apiUrl, $this->message);
         $data = $response->throw()->json();
         if (data_get($data, 'errmsg') === 'ok') {
-            $this->typingRelease($openid);
+
         }
         return $data;
     }
@@ -312,13 +315,25 @@ class CustomerService
             return $this;
         }
         $apiUrl = $this->getConfig('api_origin') . self::PATH_MESSAGE_SEND . '?access_token=' . $this->access_token;
-        $response = $this->httpClient->post($apiUrl, $this->message);
-        $response->throw();
-        $data = $response->json();
-        if (data_get($data, 'errmsg') === 'ok') {
-            $this->setTypingAllowed($openid);
-        }
-        return $data;
+       return retry(1,function ()use ($apiUrl,$openid){
+           try{
+               $response = $this->httpClient->post($apiUrl, $this->message);
+               $response->throw();
+               $data = $response->json();
+               if (data_get($data, 'errmsg') === 'ok') {
+                   $this->setTypingAllowed($openid);
+               }
+               $data['source']=$this->message;
+               return $data;
+           }catch (\Exception $exception){
+               if ($exception->getCode() == '42001'){
+                   $this->access_token = $this->app->auth()->refreshToken();
+               }
+               throw $exception;
+           }
+
+        },100);
+
     }
 
     /**

@@ -121,7 +121,7 @@ class WxApi
         return tap($this, function () use ($receiveData, $encrypt) {
             $this->receive = $receiveData;
             $this->encrypt = $encrypt;
-            \Log::info('receive msg',$this->receive);
+            \Log::info('receive msg',(array)$this->receive);
             if ($receiveData && function_exists('event')) {
                 event(new MessageReceived($receiveData));
             }
@@ -139,9 +139,9 @@ class WxApi
         if (!$this->receive) {
             $this->receiveMessage();
         }
-        return new Message($this->receive, $this->encrypt);
+//        return new Message($this);
         if (!isset($this->modules['message'])) {
-            $this->modules['message'] = new Message($this->receive, $this->encrypt);
+            $this->modules['message'] = new Message($this);
         }
         return $this->modules['message'];
     }
@@ -152,6 +152,7 @@ class WxApi
      */
     public function auth()
     {
+//        return new AccessToken($this);
         if (!isset($this->modules['auth'])) {
             $this->modules['auth'] = new AccessToken($this);
         }
